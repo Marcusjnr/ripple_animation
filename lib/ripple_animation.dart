@@ -17,9 +17,9 @@ class RippleAnimation extends StatefulWidget {
   final bool repeat;
 
   const RippleAnimation({
-    Key key,
-    @required this.child,
-    @required this.color,
+    Key? key,
+    required this.child,
+    required this.color,
     this.delay = const Duration(milliseconds: 0),
     this.repeat = false,
     this.minRadius = 60,
@@ -33,7 +33,7 @@ class RippleAnimation extends StatefulWidget {
 
 class _RippleAnimationState extends State<RippleAnimation>
     with TickerProviderStateMixin {
-  AnimationController _controller;
+  AnimationController? _controller;
 
   @override
   void initState() {
@@ -55,7 +55,7 @@ class _RippleAnimationState extends State<RippleAnimation>
     return CustomPaint(
       painter: CirclePainter(
         _controller,
-        color: widget.color ?? Colors.black,
+        color: widget.color,
         minRadius: widget.minRadius,
         wavesCount: widget.ripplesCount + 2,
       ),
@@ -65,7 +65,7 @@ class _RippleAnimationState extends State<RippleAnimation>
 
   @override
   void dispose() {
-    _controller.dispose();
+    _controller!.dispose();
     super.dispose();
   }
 }
@@ -76,31 +76,31 @@ class CirclePainter extends CustomPainter {
     this._animation, {
     this.minRadius,
     this.wavesCount,
-    @required this.color,
+    required this.color,
   }) : super(repaint: _animation);
   final Color color;
-  final double minRadius;
+  final double? minRadius;
   final wavesCount;
-  final Animation<double> _animation;
+  final Animation<double>? _animation;
 
   @override
   void paint(Canvas canvas, Size size) {
     final Rect rect = Rect.fromLTRB(0.0, 0.0, size.width, size.height);
     for (int wave = 0; wave <= wavesCount; wave++) {
-      circle(canvas, rect, minRadius, wave, _animation.value, wavesCount);
+      circle(canvas, rect, minRadius, wave, _animation!.value, wavesCount);
     }
   }
 
   // animating the opacity according to min radius and waves count.
-  void circle(Canvas canvas, Rect rect, double minRadius, int wave,
-      double value, int length) {
+  void circle(Canvas canvas, Rect rect, double? minRadius, int wave,
+      double value, int? length) {
     Color _color;
     double r;
     if (wave != 0) {
-      double opacity = (1 - ((wave - 1) / length) - value).clamp(0.0, 1.0);
+      double opacity = (1 - ((wave - 1) / length!) - value).clamp(0.0, 1.0);
       _color = color.withOpacity(opacity);
 
-      r = minRadius * (1 + ((wave * value))) * value;
+      r = minRadius! * (1 + ((wave * value))) * value;
       final Paint paint = Paint()..color = _color;
       canvas.drawCircle(rect.center, r, paint);
     }
